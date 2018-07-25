@@ -1,6 +1,6 @@
 # Performance metrics -- server requests
 
-This project allows you to measure visits on your server and presents the results of it on a chart.
+This project allows you to measure visits on your server and presents the results of it on a chart, collects data as csv and prepares html report.
 
 ## Getting Started
 
