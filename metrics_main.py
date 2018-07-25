@@ -19,7 +19,8 @@ def count_user_visits():
     global line_to_start_read
     global visits_per_minute
     # TODO: try, catch
-    subprocess.call("(scp -i ~/.ssh/metrics ec2-user@34.242.250.224:~/logs/access.log .)", shell=True)
+    # uncomment below for ssh aws instance logs copy
+    # subprocess.call("(scp -i ~/.ssh/metrics ec2-user@34.242.250.224:~/logs/access.log .)", shell=True)
     data = np.genfromtxt('access.log', dtype=str, delimiter='"', usecols=(0,2,5))
     print("line to start " + str(line_to_start_read))
     if line_to_start_read != 0:

@@ -17,7 +17,7 @@ def prepare_and_build_HTML_file(graph_file_name, csv_file):
             <h1>Server visits per each minute</h1>
             <iframe width="1000" height="550" frameborder="0" seamless="seamless" \
             scrolling="no" src="''' + graph_file_name + '''"></iframe>
-            <p>this is impressive</p>
+            <p></p>
 
             <h3>Summary table:</h3>
             ''' + summary_table + '''
