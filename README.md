@@ -20,7 +20,8 @@ THEN: python3 metrics_main.py
 As you woudn't have the access to aws instance with logs, the line within above mentioned main file has the code with copying logs via ssh commented. To simulate having those logs ready, I've placed the access.log file in this project.
 
 ### Additional Info
-Under *output* directory you already find some results for greater picture of what you can get using my project. 
+Under *output* directory you already find some results for greater picture of what you can get using my project.
+I wanted to ommit setting up cron for this script so the repetition of the script for a period of time is simulated using *schedule* library.
 
 ## Authors
 
