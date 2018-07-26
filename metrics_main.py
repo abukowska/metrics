@@ -8,17 +8,16 @@ import schedule
 from supporting_methods import support
 
 START = time.time()
-PERIOD_OF_TIME_SEC = 44
-REPEATING_SCHEDULE_SEC = 10
+REPEATING_SCHEDULE_SEC = 60  # as we'd like to mesure data every 1 min
+PERIOD_OF_TIME_SEC = REPEATING_SCHEDULE_SEC * 5  # script is going to work for 5 mins
 GRAPH_FILE_NAME = "graph.png"
 visits_per_minute = []
 line_to_start_read = 0
 
 def count_user_visits():
-    """Counts user server visits basing on copied server logs (via ssh).
-    Requests with statuses 400 or similar, visits by Googlebot are excluded from the user list.
-    Unique user
-
+    """Counts unique users server visits basing on copied server logs (via ssh or local file).
+    Requests with statuses 400 or similar or visits by Googlebot are excluded from the user list.
+    Unique users are identified by IP address and User Agent.
     """
     global line_to_start_read
     global visits_per_minute
@@ -58,6 +57,10 @@ def count_user_visits():
 
 
 def main():
+    """Counts unique users server visits through time.
+    Report is presented as HTML file in output directory.
+    There is also csv data file and a graph generated.
+    """
     count_user_visits()
 
     # schedule instead of cron

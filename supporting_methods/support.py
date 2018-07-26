@@ -26,7 +26,7 @@ def prepare_and_build_HTML_report(graph_file_name, csv_file):
             <h1>Server visits per each minute</h1>
             <iframe width="1000" height="550" frameborder="0" seamless="seamless" \
             scrolling="no" src="''' + graph_file_name + '''"></iframe>
-            <p></p>
+            <p> Unique users are identified by IP address and User Agent. Requests with statuses 400 or similar or visits by Googlebot are excluded from the user list.</p>
 
             <h3>Summary table:</h3>
             ''' + summary_table + '''
