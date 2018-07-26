@@ -8,8 +8,8 @@ import schedule
 from supporting_methods import support
 
 START = time.time()
-REPEATING_SCHEDULE_SEC = 60  # as we'd like to mesure data every 1 min
-PERIOD_OF_TIME_SEC = REPEATING_SCHEDULE_SEC * 5  # script is going to work for 5 mins
+REPEATING_SCHEDULE_SEC = 6  # we'd like to mesure data every 1 min
+PERIOD_OF_TIME_SEC = REPEATING_SCHEDULE_SEC * 4  # script is going to work for 5 mins
 GRAPH_FILE_NAME = "graph.png"
 visits_per_minute = []
 line_to_start_read = 0
@@ -34,10 +34,10 @@ def count_user_visits():
 
     if line_to_start_read != 0:
         newly_gen_data = data[line_to_start_read:]
-        line_to_start_read = len(data.tolist())
     else:
         newly_gen_data = data
-        line_to_start_read = len(data.tolist())
+
+    line_to_start_read = len(data.tolist())  # new last file line number assigned
 
     for el in newly_gen_data:
         user_agent = el[2].strip()
@@ -75,7 +75,7 @@ def main():
     x_axis_time = list(x for x in range(1, len(visits_per_minute)+1))
     y_axis_visits = visits_per_minute
 
-    support.draw_chart_and_save_to_picture_format(x_axis_time, y_axis_visits, PERIOD_OF_TIME_SEC, GRAPH_FILE_NAME, 'time [min]', 'number of visits')
+    support.draw_chart_and_save_to_picture_format(x_axis_time, y_axis_visits, GRAPH_FILE_NAME, 'time [min]', 'number of visits')
 
     support.prepare_and_build_HTML_report(GRAPH_FILE_NAME, "output/metrics_results.csv")
 

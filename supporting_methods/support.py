@@ -36,22 +36,21 @@ def prepare_and_build_HTML_report(graph_file_name, csv_file):
     with open('output/html_metric_results.html', 'w') as htmlfile:
         htmlfile.write(html_string)
 
-def draw_chart_and_save_to_picture_format(x_axis_data, y_axis_data, period_of_time, graph_file_name, x_label_name, y_label_name):
-    """Draws a chart/graph based on provided data per each x, y axis, their label names,
-    execution time of the script (axis x range) under expected filepath.
+def draw_chart_and_save_to_picture_format(x_axis_data, y_axis_data, graph_file_name, x_label_name, y_label_name):
+    """Draws a chart/graph based on provided data per each x, y axis and their label names
+    under expected filepath.
 
     Keyword arguments:
     x_axis_data -- data for x axis
     y_axis_data -- data for y axis
-    period_of_time -- execution time of the script, helps to render desired x axis arange
     x_label_name, y_label_name -- descripions of axes with their units
     """
     fig = plt.figure(figsize=(10, 8))
     plt.plot(x_axis_data, y_axis_data, 'go')
     plt.xlabel(x_label_name, fontsize=16)
     plt.ylabel(y_label_name, fontsize=16)
+    plt.xticks(x_axis_data)
     plt.grid(axis='y', linestyle='--')
-    plt.xticks(np.arange(0, period_of_time/60, 1.0))
     fig.savefig("output/" + graph_file_name)
 
 def save_output_data_as_csv_enumerated_data(data):
