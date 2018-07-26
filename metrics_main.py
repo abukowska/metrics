@@ -1,5 +1,5 @@
-import csv
 import subprocess
+import sys
 import time
 
 import numpy as np
@@ -8,29 +8,39 @@ import schedule
 from supporting_methods import support
 
 START = time.time()
-PERIOD_OF_TIME_SEC = 20
-REPEATING_SCHEDULE_SEC = 6
+PERIOD_OF_TIME_SEC = 44
+REPEATING_SCHEDULE_SEC = 10
 GRAPH_FILE_NAME = "graph.png"
-
 visits_per_minute = []
 line_to_start_read = 0
 
 def count_user_visits():
+    """Counts user server visits basing on copied server logs (via ssh).
+    Requests with statuses 400 or similar, visits by Googlebot are excluded from the user list.
+    Unique user
+
+    """
     global line_to_start_read
     global visits_per_minute
-    # TODO: try, catch
-    # uncomment below for ssh aws instance logs copy
-    # subprocess.call("(scp -i ~/.ssh/metrics ec2-user@34.242.250.224:~/logs/access.log .)", shell=True)
-    data = np.genfromtxt('access.log', dtype=str, delimiter='"', usecols=(0,2,5))
+    users = []
+    try:
+        # uncomment below for ssh aws instance logs copy
+        # subprocess.call("(scp -i ~/.ssh/metrics ec2-user@34.242.250.224:~/logs/access.log .)", shell=True)
+        data = np.genfromtxt('access.log', dtype=str, delimiter='"', usecols=(0,2,5))
+    except IOError as ioe:
+        print("IOError, can't find or read data.")
+        sys.exit(1)
+
     print("line to start " + str(line_to_start_read))
+
     if line_to_start_read != 0:
-        data = data[line_to_start_read:]
+        newly_gen_data = data[line_to_start_read:]
+        line_to_start_read = len(data.tolist())
     else:
+        newly_gen_data = data
         line_to_start_read = len(data.tolist())
 
-    users = []
-
-    for el in data:
+    for el in newly_gen_data:
         user_agent = el[2].strip()
         status_code = el[1].strip().split()[0]
 
@@ -38,7 +48,6 @@ def count_user_visits():
             continue
 
         ip_address = el[0].strip().split()[0]
-
         one_unique_user = (ip_address, user_agent)
         users.append(one_unique_user)
 
@@ -50,25 +59,22 @@ def count_user_visits():
 
 def main():
     count_user_visits()
-    schedule.every(REPEATING_SCHEDULE_SEC).seconds.do(count_user_visits)
 
+    # schedule instead of cron
+    schedule.every(REPEATING_SCHEDULE_SEC).seconds.do(count_user_visits)
     while True:
         schedule.run_pending()
         if time.time() > START + PERIOD_OF_TIME_SEC:
             break
 
-    with open('output/metrics_results.csv', 'w') as csvfile:
-        spamwriter = csv.writer(csvfile, delimiter=',')
-        spamwriter.writerow(('min', 'no of visits'))
-        for record in enumerate(visits_per_minute, 1):
-            spamwriter.writerow(record)
+    support.save_output_data_as_csv_enumerated_data(visits_per_minute)
 
     x_axis_time = list(x for x in range(1, len(visits_per_minute)+1))
     y_axis_visits = visits_per_minute
 
-    support.draw_chart_and_save_to_picture_format(x_axis_time, y_axis_visits, PERIOD_OF_TIME_SEC, GRAPH_FILE_NAME)
+    support.draw_chart_and_save_to_picture_format(x_axis_time, y_axis_visits, PERIOD_OF_TIME_SEC, GRAPH_FILE_NAME, 'time [min]', 'number of visits')
 
-    support.prepare_and_build_HTML_file(GRAPH_FILE_NAME, "output/metrics_results.csv")
+    support.prepare_and_build_HTML_report(GRAPH_FILE_NAME, "output/metrics_results.csv")
 
 
 if __name__ == "__main__":
